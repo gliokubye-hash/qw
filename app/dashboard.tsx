@@ -97,6 +97,7 @@ import { createGeoFireObject } from '@/utils/geofire';
 import { getUnreadCount, listenForClientMessages, autoDeleteReadMessages, watchRideStatusForCleanup } from '@/utils/chat';
 import TripsHistory from '@/components/TripsHistory';
 import DriverSettings from '@/components/DriverSettings';
+import BottomNav from '@/components/BottomNav';
 
 const { width, height } = Dimensions.get('window');
 
@@ -647,16 +648,16 @@ export default function Dashboard() {
     );
   }
 
-  if (activeTab === 'trips') {
-    return <TripsHistory driverId={driverId} />;
+if (activeTab === 'trips') {
+  return <View style={styles.container}><TripsHistory driverId={driverId} /><BottomNav activeTab="trips" onChange={(tab) => setActiveTab(tab)} onInboxPress={handleInboxPress} unreadCount={unreadCount} /></View>;
   }
-
-  if (activeTab === 'settings') {
-    return <DriverSettings driverData={driverData} onNavigate={(route) => {
-      if (route === 'Vehicle and Documents') router.push('/vehicle-information');
-      else if (route.toLowerCase() === 'security') router.push('/forgot-password');
-      else Alert.alert(route, 'This section is coming soon.');
-    }} />;
+  
+if (activeTab === 'settings') {
+  return <View style={styles.container}><DriverSettings driverData={driverData} onNavigate={(route) => {
+  if (route === 'Vehicle and Documents') router.push('/vehicle-information');
+  else if (route.toLowerCase() === 'security') router.push('/forgot-password');
+  else Alert.alert(route, 'This section is coming soon.');
+  }} /><BottomNav activeTab="settings" onChange={(tab) => setActiveTab(tab)} onInboxPress={handleInboxPress} unreadCount={unreadCount} /></View>;
   }
 
   return (
