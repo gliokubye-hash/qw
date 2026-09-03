@@ -46,6 +46,11 @@ export default function DriverMap({
 }: DriverMapProps) {
   const webViewRef = useRef<WebView>(null);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [lastKnownPosition, setLastKnownPosition] = useState<{ lat: number; lng: number; heading: number } | null>(null);
+
+  useEffect(() => {
+    if (vehiclePosition) setLastKnownPosition(vehiclePosition);
+  }, [vehiclePosition]);
 
   // Stable HTML so the WebView doesn't reload on every render
   const htmlRef = useRef<string>(getMapHtml(DEFAULT_LAT, DEFAULT_LNG));
@@ -89,19 +94,20 @@ export default function DriverMap({
 
   // Update vehicle position + trim polyline
   useEffect(() => {
-    if (!isMapReady || !vehiclePosition) return;
+    if (!isMapReady) return;
+    const effectivePosition = vehiclePosition || lastKnownPosition || { lat: DEFAULT_LAT, lng: DEFAULT_LNG, heading: 0 };
     sendCommand({
       type: 'UPDATE_VEHICLE',
-      lat: vehiclePosition.lat,
-      lng: vehiclePosition.lng,
-      heading: vehiclePosition.heading,
+      lat: effectivePosition.lat,
+      lng: effectivePosition.lng,
+      heading: effectivePosition.heading,
       vehicleType: vehicleType || 'economy',
       color: vehicleColor || 'b',
     });
     sendCommand({
       type: 'TRIM_POLYLINE',
-      driverLat: vehiclePosition.lat,
-      driverLng: vehiclePosition.lng,
+      driverLat: effectivePosition.lat,
+      driverLng: effectivePosition.lng,
     });
     // Camera is handled inside the WebView: it centers on the vehicle once on
     // load and auto-recenters after 20s idle (when no active trip). We no longer
