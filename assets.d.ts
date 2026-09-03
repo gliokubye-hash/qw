@@ -19,3 +19,7 @@ declare module '*.webp' {
   const value: number | string;
   export default value;
 }
+declare module '*.mp3' {
+  const value: number | string;
+  export default value;
+}

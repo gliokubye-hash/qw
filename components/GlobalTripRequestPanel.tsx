@@ -62,9 +62,9 @@ const API_BASE = 'https://aletwend-render-backend.onrender.com';
 
 // Formats an amount with an optional currency code/symbol.
 function formatMoney(amount: number | undefined, currency?: string): string {
-  if (amount == null || isNaN(Number(amount))) return currency ? `${currency} --` : '--';
+  if (amount == null || isNaN(Number(amount))) return 'ZMW --';
   const value = Number(amount).toFixed(2);
-  return currency ? `${currency} ${value}` : value;
+  return `ZMW ${value}`;
 }
 
 // Slides down from the top using the same spring motion as the request panel.
@@ -115,7 +115,7 @@ function FareSummaryPanel({
 
           <View style={fareStyles.totalBox}>
             <Text style={fareStyles.totalLabel}>Total earned</Text>
-            <Text style={fareStyles.totalAmount}>{formatMoney(total, currency)}</Text>
+            <Text style={fareStyles.totalAmount}>{formatMoney(((data as any).workflowType === 'store_delivery' || ((data as any).items && (data as any).items.length > 0)) ? fee : total, 'ZMW')}</Text>
           </View>
 
           {(baseFare !== undefined || typeof fee === 'number') && (
@@ -128,7 +128,7 @@ function FareSummaryPanel({
               )}
               {typeof fee === 'number' && (
                 <View style={fareStyles.breakdownRow}>
-                  <Text style={fareStyles.breakdownLabel}>Service fee</Text>
+                  <Text style={fareStyles.breakdownLabel}>{(data as any).workflowType === 'store_delivery' ? 'Delivery fee' : 'Service fee'}</Text>
                   <Text style={fareStyles.breakdownValue}>{formatMoney(fee, currency)}</Text>
                 </View>
               )}

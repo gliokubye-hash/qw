@@ -116,6 +116,7 @@ export default function Dashboard() {
   const [driverData, setDriverData] = useState<any>(null);
   const [driverId, setDriverId] = useState<string | null>(null);
   const [vehicleType, setVehicleType] = useState<string>('economy');
+  const [vehicleColor, setVehicleColor] = useState<string>('b');
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [vehiclePosition, setVehiclePosition] = useState<{ lat: number; lng: number; heading: number } | null>(null);
 
@@ -238,11 +239,13 @@ export default function Dashboard() {
 
         // Determine vehicle type for the map vehicle marker
         const resolvedVehicleType =
-          data.vehicleType ||
+          data.vehicle?.type || data.vehicleType ||
           data.serviceType ||
           data.category ||
           'economy';
         setVehicleType(String(resolvedVehicleType).toLowerCase());
+        const rawColor = String(data.vehicle?.color || data.vehicleColor || 'black').toLowerCase();
+        setVehicleColor(({black:'b',blue:'bl',red:'r',gray:'g',grey:'g',white:'w'} as any)[rawColor] || rawColor);
       }
       setIsLoading(false);
     });
@@ -645,11 +648,11 @@ export default function Dashboard() {
   }
 
   if (activeTab === 'trips') {
-    return <TripsHistory driverId={driverId} onBack={() => setActiveTab('home')} />;
+    return <TripsHistory driverId={driverId} />;
   }
 
   if (activeTab === 'settings') {
-    return <DriverSettings driverData={driverData} onBack={() => setActiveTab('home')} onNavigate={(route) => {
+    return <DriverSettings driverData={driverData} onNavigate={(route) => {
       if (route === 'Vehicle and Documents') router.push('/vehicle-information');
       else if (route.toLowerCase() === 'security') router.push('/forgot-password');
       else Alert.alert(route, 'This section is coming soon.');
@@ -697,6 +700,7 @@ export default function Dashboard() {
           polyline={showPolyline ? activePolyline || undefined : undefined}
           vehiclePosition={vehiclePosition || undefined}
           vehicleType={vehicleType}
+          vehicleColor={vehicleColor}
           markers={displayedMarkers}
           arrivalTime={arrivalTime}
           arrivalPosition={arrivalPosition}

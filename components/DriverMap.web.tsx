@@ -13,8 +13,8 @@ import refrigeratedTruckIcon from '../assets/images/refrigerated_truck.png';
 import xxlIcon from '../assets/images/xxl.png';
 
 // Johannesburg default center
-const DEFAULT_LAT = -26.2041;
-const DEFAULT_LNG = 28.0473;
+const DEFAULT_LAT = -15.3875;
+const DEFAULT_LNG = 28.3228;
 
 // On web, an imported image may be a string URL or a module object with `.uri`/`.default`.
 function resolveAsset(asset: any): string {
@@ -50,6 +50,7 @@ interface DriverMapProps {
   trimmedPolyline?: string;
   vehiclePosition?: { lat: number; lng: number; heading: number };
   vehicleType?: string;
+  vehicleColor?: string;
   markers?: MapMarker[];
   arrivalTime?: string | null;
   arrivalPosition?: { lat: number; lng: number } | null;
@@ -86,6 +87,7 @@ export default function DriverMap({
   polyline: encodedPolyline,
   vehiclePosition,
   vehicleType,
+  vehicleColor,
   markers,
   arrivalTime,
   arrivalPosition,

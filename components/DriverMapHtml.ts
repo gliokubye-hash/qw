@@ -2,31 +2,26 @@
 // Communicates with the React Native side via window.postMessage / ReactNativeWebView.postMessage.
 
 import {
-  bicycleDataUri,
-  motorbikeDataUri,
-  economyDataUri,
-  closed_truckDataUri,
-  open_truckDataUri,
-  refrigerated_truckDataUri,
-  xxlDataUri,
+  abicyclebDataUri, abicycleblDataUri, abicyclerDataUri,
+  amotorbikebDataUri, amotorbikeblDataUri, amotorbikerDataUri,
+  abusbDataUri, abusblDataUri, abusgDataUri, abuswDataUri,
+  acarbDataUri, acarblDataUri, acargDataUri, acarrDataUri, acarwDataUri,
+  aclosedbDataUri, aclosedblDataUri, aclosedgDataUri, aclosedrDataUri, aclosedwDataUri,
+  aopenbDataUri, aopenblDataUri, aopengDataUri, aopenrDataUri, aopenwDataUri,
+  atruckbDataUri, atruckblDataUri, atruckgDataUri, atruckrDataUri, atruckwDataUri,
 } from './vehicleIconsBase64';
 
 // Vehicle type -> image source. The WebView loads inline HTML and cannot resolve
 // bundled asset paths, so the icons are inlined as base64 data URIs. This
 // guarantees the icon always loads regardless of network state.
-const VEHICLE_IMAGE_MAP: Record<string, string> = {
-  bicycle: bicycleDataUri,
-  motorbike: motorbikeDataUri,
-  economy: economyDataUri,
-  car: economyDataUri,
-  truck: closed_truckDataUri,
-  closed_truck: closed_truckDataUri,
-  open_truck: open_truckDataUri,
-  refrigerated_truck: refrigerated_truckDataUri,
-  bus: xxlDataUri,
-  xxl: xxlDataUri,
+const VEHICLE_IMAGE_MAP: Record<string, Record<string, string>> = {
+ bicycle:{b:abicyclebDataUri,bl:abicycleblDataUri,r:abicyclerDataUri}, motorbike:{b:amotorbikebDataUri,bl:amotorbikeblDataUri,r:amotorbikerDataUri},
+ bus:{b:abusbDataUri,bl:abusblDataUri,g:abusgDataUri,w:abuswDataUri}, xxl:{b:abusbDataUri,bl:abusblDataUri,g:abusgDataUri,w:abuswDataUri},
+ economy:{b:acarbDataUri,bl:acarblDataUri,g:acargDataUri,r:acarrDataUri,w:acarwDataUri}, car:{b:acarbDataUri,bl:acarblDataUri,g:acargDataUri,r:acarrDataUri,w:acarwDataUri},
+ truck:{b:aclosedbDataUri,bl:aclosedblDataUri,g:aclosedgDataUri,r:aclosedrDataUri,w:aclosedwDataUri}, closed_truck:{b:aclosedbDataUri,bl:aclosedblDataUri,g:aclosedgDataUri,r:aclosedrDataUri,w:aclosedwDataUri},
+ open_truck:{b:aopenbDataUri,bl:aopenblDataUri,g:aopengDataUri,r:aopenrDataUri,w:aopenwDataUri}, refrigerated_truck:{b:atruckbDataUri,bl:atruckblDataUri,g:atruckgDataUri,r:atruckrDataUri,w:atruckwDataUri}
 };
-
+const DEFAULT_VEHICLE = VEHICLE_IMAGE_MAP.economy.b;
 // Per-vehicle-type rotation offset (degrees). The base64 icons are authored
 // pointing "up"/north, so 0 offset means a heading of 0 displays correctly. If
 // any icon's artwork is not north-up, set its offset here so heading 0 renders
@@ -137,7 +132,7 @@ export function getMapHtml(initialLat: number, initialLng: number): string {
   <script>
     var VEHICLE_IMAGE_MAP = ${vehicleMapJson};
     var VEHICLE_ROTATION_OFFSET = ${vehicleRotationJson};
-    var DEFAULT_VEHICLE = VEHICLE_IMAGE_MAP['economy'];
+    var DEFAULT_VEHICLE = VEHICLE_IMAGE_MAP.economy.b;
 
     var map = new maplibregl.Map({
       container: 'map',
@@ -199,8 +194,9 @@ export function getMapHtml(initialLat: number, initialLng: number): string {
       vehicleImg.style.transform = 'rotate(' + deg + 'deg)';
     }
 
-    function updateVehicle(lat, lng, heading, vehicleType) {
-      var imgUrl = (vehicleType && VEHICLE_IMAGE_MAP[vehicleType]) ? VEHICLE_IMAGE_MAP[vehicleType] : DEFAULT_VEHICLE;
+    function updateVehicle(lat, lng, heading, vehicleType, color) {
+      var group = VEHICLE_IMAGE_MAP[vehicleType] || VEHICLE_IMAGE_MAP.economy;
+      var imgUrl = group[color] || group.b || DEFAULT_VEHICLE;
 
       // Track latest position/heading for the camera logic.
       lastVehicleLatLng = { lat: lat, lng: lng };

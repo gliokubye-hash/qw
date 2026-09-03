@@ -5,8 +5,8 @@ import polyline from '@mapbox/polyline';
 import { getMapHtml } from './DriverMapHtml';
 
 // Johannesburg default center
-const DEFAULT_LAT = -26.2041;
-const DEFAULT_LNG = 28.0473;
+const DEFAULT_LAT = -15.3875;
+const DEFAULT_LNG = 28.3228;
 
 export interface MapMarker {
   id: string;
@@ -20,6 +20,8 @@ interface DriverMapProps {
   trimmedPolyline?: string;
   vehiclePosition?: { lat: number; lng: number; heading: number };
   vehicleType?: string;
+  vehicleColor?: string;
+  driverId?: string;
   markers?: MapMarker[];
   arrivalTime?: string | null;
   arrivalPosition?: { lat: number; lng: number } | null;
@@ -35,6 +37,7 @@ export default function DriverMap({
   trimmedPolyline,
   vehiclePosition,
   vehicleType,
+  vehicleColor,
   markers,
   arrivalTime,
   arrivalPosition,
@@ -93,6 +96,7 @@ export default function DriverMap({
       lng: vehiclePosition.lng,
       heading: vehiclePosition.heading,
       vehicleType: vehicleType || 'economy',
+      color: vehicleColor || 'b',
     });
     sendCommand({
       type: 'TRIM_POLYLINE',
@@ -103,7 +107,7 @@ export default function DriverMap({
     // load and auto-recenters after 20s idle (when no active trip). We no longer
     // snap the camera on every position update, so the driver can freely zoom.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vehiclePosition, vehicleType, isMapReady]);
+  }, [vehiclePosition, vehicleType, vehicleColor, isMapReady]);
 
   // Tell the map whether a trip is active so it knows when the route overview
   // (FIT_BOUNDS) owns the camera vs. the idle auto-recenter behavior.

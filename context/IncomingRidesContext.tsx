@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { ref, onValue, off } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
 import { database, auth } from '@/config/firebase';
+import { useAudioPlayer } from 'expo-audio';
+import requestSound from '@/assets/sounds/request.mp3';
 
 // RTDB-based trip request structure
 interface TripRequestData {
@@ -48,6 +50,7 @@ export function TripRequestProvider({ children }: { children: ReactNode }) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [driverUid, setDriverUid] = useState<string | null>(null);
+  const requestPlayer = useAudioPlayer(requestSound);
 
   // Listen for auth state changes to get authenticated driver UID
   useEffect(() => {
@@ -117,6 +120,7 @@ export function TripRequestProvider({ children }: { children: ReactNode }) {
         if (activeRequest.status === 'incoming_request' && !isVisible) {
           setIsVisible(true);
           setIsMinimized(false);
+        try { requestPlayer.seekTo(0); requestPlayer.play(); } catch {}
         }
 
         // Handle terminal statuses - hide after brief delay
@@ -130,16 +134,18 @@ export function TripRequestProvider({ children }: { children: ReactNode }) {
         // No active request found
         setCurrentRequest(null);
         setIsVisible(false);
+        try { requestPlayer.pause(); requestPlayer.seekTo(0); } catch {}
       }
     });
 
     return () => off(tripRequestsRef, 'value', listener);
-  }, [driverUid, currentRequest?.status, isVisible]);
+  }, [driverUid, currentRequest?.status, isVisible, requestPlayer]);
 
   const clearRequest = () => {
     setCurrentRequest(null);
     setIsVisible(false);
     setIsMinimized(false);
+    try { requestPlayer.pause(); requestPlayer.seekTo(0); } catch {}
   };
 
   return (
