@@ -437,7 +437,7 @@ export function getMapHtml(initialLat: number, initialLng: number): string {
 
       switch (msg.type) {
         case 'UPDATE_VEHICLE':
-          updateVehicle(msg.lat, msg.lng, msg.heading || 0, msg.vehicleType);
+          updateVehicle(msg.lat, msg.lng, msg.heading || 0, msg.vehicleType, msg.color);
           break;
         case 'DRAW_POLYLINE':
           drawPolyline(msg.encodedPolyline, msg.color);

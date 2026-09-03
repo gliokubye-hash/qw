@@ -701,8 +701,8 @@ if (activeTab === 'settings') {
           polyline={showPolyline ? activePolyline || undefined : undefined}
           vehiclePosition={vehiclePosition || undefined}
           vehicleType={vehicleType}
-          vehicleColor={vehicleColor}
-          markers={displayedMarkers}
+  vehicleColor={vehicleColor}
+  markers={displayedMarkers}
           arrivalTime={arrivalTime}
           arrivalPosition={arrivalPosition}
           hasActiveTrip={hasActiveTrip}
